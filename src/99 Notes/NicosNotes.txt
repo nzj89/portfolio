@@ -1,0 +1,437 @@
+/==============================\
+| Nico's Notes for the Project |
+\==============================/
+
+
+
++ The !! (double bang) logical operators return a value’s truthy value.
+------------------------------------------------------------------------
+https://medium.com/better-programming/javascript-bang-bang-i-shot-you-down-use-of-double-bangs-in-javascript-7c9d94446054
+========================================================================================================================
+Values that are associated with boolean true are said to be truthy.
+ Values that are associated with boolean false values are said to be falsy. ಠ_ಠ
+
+example:
+---------
+// Returns true if a user is signed-in.
+function isUserSignedIn() {
+    return !!firebase.auth().currentUser;
+}
+=====================================================================================================================
+
+
+
++ Example of mix of text with data Variables
+===========================================
+:class="`white ${color}--text`"
+
+
+
++ Vuex + Router Sync + Keep Track of Users
+==========================================
+https://github.com/michalbujalski/firebase-auth-demo
+
+
+
++ How to make sure user is logged in before reloading the Page 
+============================================================
+https://forum.vuejs.org/t/firebase-auth-and-vue-router/3086/5
+
+
+
++ Importing firebase
+===================================================================================
+I'm use firebase for my vuejs projects, import firebase into main.js like this:
+
+import firebase from 'firebase/app'
+import 'firebase/<package>'
+
+Always remember import firebase into your modules like this (IMPORTANT):
+import firebase from 'firebase/app'
+
+DON'T import like this:
+import firebase from 'firebase'
+-------------------------
+
+
+
+
+================================================================================================
++ Watch & LocalStorage example
+=============
+ex1
+---
+HTML  JS Result
+EDIT ON
+ const app = new Vue({
+  el:'#app',
+  data:{
+    name:''
+  },
+  mounted() {
+    if(localStorage.name) this.name = localStorage.name;
+  },
+  watch:{
+    name(newName) {
+      localStorage.name = newName;
+    }
+  }
+})
+
+ex2
+---
+As before, mounted is used to load persisted data
+
+const app = new Vue({
+  el: '#app',
+  data: {
+    name: '',
+    age: 0
+  },
+  mounted() {
+    if (localStorage.name) {
+      this.name = localStorage.name;
+    }
+    if (localStorage.age) {
+      this.age = localStorage.age;
+    }
+  },
+  methods: {
+    persist() {
+      localStorage.name = this.name;
+      localStorage.age = this.age;
+      console.log('now pretend I did more stuff...');
+    }
+  }
+})
+================================================================================================
+
+
+
+
++ Plugins & Global Variables
+===========================
+https://dev.to/nkoik/writing-a-very-simple-plugin-in-vuejs---example-8g8
+
+
+Info About Users in firebase, all u need to knwo to change their emails delete accounts etc.
+=============================================================================================
+https://firebase.google.com/docs/auth/web/manage-users
+
+
++ Facebook
+=============
+APP ID: 
+400934377295883
+App Secret
+eaa1f594b90592a786f209ec58f6a727
+firebase
+https://nz-eportfolio.firebaseapp.com/__/auth/handler 
+
++ Vue Props
+============
+When u change the value of a prop in parent component the son is updated
+
+
+
+
+================================================================================================
++ Users
+------------------
+https://firebase.google.com/docs/auth/web/manage-users
+=====================================================
+var user = firebase.auth().currentUser;
+var name, email, photoUrl, uid, emailVerified;
+
+if (user != null) {
+  name = user.displayName;
+  email = user.email;
+  photoUrl = user.photoURL;
+  emailVerified = user.emailVerified;
+  uid = user.uid;  // The user's ID, unique to the Firebase project. Do NOT use
+                   // this value to authenticate with your backend server, if
+                   // you have one. Use User.getToken() instead.
+}
+================================================================================================
+
+
+
+
+
+
+================================================================================================
++ Props
+-------
+https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
+======================================================
++ using prop as local Data
+------------------------------------
+props: ['initialCounter'],
+data: function () {
+  return {
+    counter: this.initialCounter
+  }
+}
+++ Computed With FUNCTION !!
+------------------------------------
+props: ['size'],
+computed: {
+  normalizedSize: function () {
+    return this.size.trim().toLowerCase()
+  }
+}
++++ v-model in props example
+------------------------------------
+This pattern allows you to use base components more like raw HTML elements, without having to care about which element is actually at its root:
+
+!!!!!!!!! By default, v-model on a component uses value as the prop and input as the event !!!!!!!!!!!!!!!!!!!
+
+<base-input
+  v-model="username"
+  required
+  placeholder="Enter your username"
+></base-input>
+================================================================================================
+
+ 
+
+
+
+ ================================================================================================
+ + Events
+ ------------
+ https://vuejs.org/v2/guide/components-custom-events.html   <-------- Examples on v-model as a prop
+ =============================================
+ always use kebab-case for event names
+
+
+ ImageUploader
+ --------------
+ https://www.freecodecamp.org/news/how-to-build-a-flexible-image-uploader-component-using-vue-js-2-0-5ee7fc77516/
+ ================================================
+ FormData for uploading to the server, and imageURL for the preview
+================================================================================================
+
+
+
+
+
+================================================================================================
+ + Storage
+ --------
+https://firebase.google.com/docs/storage/web/start?authuser=0
+ =============
+ + Rules for when user is auth
+ -------------------------------
+ rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+---------------------------------------
++ This reference points to the root of your Cloud Storage bucket.
+     var storageRef = this.$auth.storage.ref();
+================================================================================================
+
+
+
+
+
+
+================================================================================================
+// + STUFF FROM IMAGE UPLOADER I MIGHT NEED
+// ---------------------------------------------
+Best Uploader Example Found                       <-------------------
+https://lovemewithoutall.github.io/it/vue-image-upload-to-firestorage/  <-------------------
+// ---------------------------------------------
+// A lightweight progress bar for vue 
+// https://github.com/hilongjw/vue-progressbar
+================================================================================================
+ +       uploadTask.on(
+          "state_changed",
+
+          function progress(snapshot) {
+            this.value = this.value + 10;
+           // alert("State has changed ");
+            var percentage =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+           // alert("Percentage of the snapshot" + percentage);
+           // alert("Updating the progress bar with percentage");
+            this.updateBar(percentage);
+            switch (snapshot.state) {
+              case "paused": // or firebase.storage.TaskState.PAUSED
+               // alert("Upload is paused");
+                break;
+              case "running": // or firebase.storage.TaskState.RUNNING
+              //  alert("Upload is running");
+                break;
+            }
+          },
+
+          function error(err) {
+           // alert("error" + err);
+          },
+
+          function complete() {
+          //  alert("complete");
+          }
+        );
+
+         /* ----------------------------------------------------------
+++                   This is maybe needed in ImageUploarder.vue
+         /* ----------------------------------------------------------
+          i think i dont need this 
+          // Old Version
+          // Append file into FormData and turn file into image URL
+          let formData = new FormData();
+          let imageURL = URL.createObjectURL(imageFile);
+          formData.append(fieldName, imageFile);
+          // Emit the FormData and image URL to the parent component
+          // We use "input" because we are using v-model in the Parent Component
+          this.$emit("input", { formData, imageURL });
+          ------------------------------------------------------------------*/
+================================================================================================
+
+
+
++ Reset component
+------------------
+https://michaelnthiessen.com/
+=======================================
+
+
++ Cropper
+------------
+https://norserium.github.io/vue-advanced-cropper/tutorials/recipes.html#changing-a-stencil
+==================================================================
+Simple Cropper With Image Upload using link above
+------------------------------------------------------
+<template>
+  <div>
+    <Cropper
+      :src="image"
+      :stencilComponent="$options.components.CircleStencil"
+      :stencilProps="{
+		previewClassname: 'preview'
+	}"
+      @change="onChange"
+    />
+
+    <v-btn @click="$refs.file.click()">Upload image</v-btn>
+    <input
+      type="file"
+      ref="file"
+      @change="uploadImage($event)"
+      accept="image/*"
+      style="display:none"
+    />
+
+    <v-avatar v-if="image" size="125px">
+      <img :src="image2" />
+    </v-avatar>
+  </div>
+</template>
+
+<script>
+import { Cropper, CircleStencil } from "vue-advanced-cropper";
+export default {
+  components: {
+    Cropper,
+    // eslint-disable-next-line
+    CircleStencil
+  },
+  data() {
+    return {
+      image: null,
+      image2: null,
+      coordinates: {
+        width: 0,
+        height: 0,
+        left: 0,
+        top: 0
+      }
+    };
+  },
+  methods: {
+    uploadImage(event) {
+      // Reference to the DOM input element
+      var input = event.target;
+      // Ensure that you have a file before attempting to read it
+      if (input.files && input.files[0]) {
+        // create a new FileReader to read this image and convert to base64 format
+        var reader = new FileReader();
+        // Define a callback function to run, when FileReader finishes its job
+        reader.onload = e => {
+          // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
+          // Read image as base64 and set to imageData
+          this.image = e.target.result;
+        };
+        // Start the reader job - read file as a data url (base64 format)
+        reader.readAsDataURL(input.files[0]);
+      }
+    },
+    onChange({ coordinates, canvas }) {
+      this.coordinates = coordinates;
+      // You able to do different manipulations at a canvas
+      // but there we just get a cropped image
+      this.image2 = canvas.toDataURL();
+    }
+  }
+};
+</script>
+
+
+<style>
+.preview {
+	border: dashed 2px rgba(255,255,255, 0.25);
+}
+</style>
+========================================================================================================
+
+
+
+
++ Add this to style if u wanna see the layout borders
+=====================================================
+.myContainer {
+  border: 2px white solid;
+}
+.myLayout {
+  border: 2px rgb(255, 0, 0) solid;
+}
+.myFlex {
+  border: 2px rgb(0, 174, 255) solid;
+}
+
+
+JSON Stringify
+===============
+JSON.stringify(this.user.providerData)
+
+Auth Providers
+===============
+alert(this.user.providerData[0].providerId);
+facebook.com
+google.com
+password
+
++ Para Tata
+------------
+https://fc89-7dbf2.firebaseapp.com
+=====================================
+
+vuetify 2.0
+-----------
+version -> npm ls --depth 0 vuetif
+https://github.com/vuetifyjs/vuetify/releases/tag/v2.0.0#user-content-upgrade-guide
+=============================================================================
+
+
+deploy
+------------
+https://medium.com/@rachidsakara/how-to-deploy-vue-js-applications-with-firebase-hosting-40cfa7f724e4
+===========================
+npm run build && firebase deploy
